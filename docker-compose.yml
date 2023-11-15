@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  ms-demo-rabbitmq:
+    image: rabbitmq:3.11.7-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: 'user'
+      RABBITMQ_DEFAULT_PASS: 'pass'
+      RABBITMQ_DEFAULT_VHOST: 'vhost'
+    restart: always
+    ports:
+      - 9011:15672
+
+  ms-demo-user-db:
+    image: postgres:14.6-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    volumes:
+      - ms-demo-user-db:/var/lib/postgresql/data
+    ports:
+      - 9012:5432
+
+  ms-demo-user-service:
+    build: 
+      context: ./ms-demo-user
+      target: base
+    restart: 'no'
+    working_dir: /usr/app
+    volumes:
+      - ./ms-demo-user:/usr/app
+    ports:
+      - 9013:9229
+      - 9010:3000
+    depends_on:
+      - ms-demo-user-db
+      - ms-demo-rabbitmq
+    command: sh -c "npm run start:debug"
+
+  ms-demo-vm-db:
+    image: postgres:14.6-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    volumes:
+      - ms-demo-vm-db:/var/lib/postgresql/data
+    ports:
+      - 9014:5432
+
+  ms-demo-vm-service: 
+    build: 
+      context: ./ms-demo-vm
+      target: base
+    restart: 'no'
+    working_dir: /usr/app
+    volumes:
+      - ./ms-demo-vm:/usr/app
+    ports:
+      - 9015:9229
+      - 9020:3000
+    depends_on:
+      - ms-demo-vm-db
+      - ms-demo-rabbitmq
+    command: sh -c "npm run start:debug"
+
+volumes:
+  ms-demo-user-db:
+  ms-demo-vm-db:
