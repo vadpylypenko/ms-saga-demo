@@ -33,6 +33,7 @@ RabbitMQ (UI) available on the address:
 http://localhost:9011/
 
 Username: user
+
 Password: pass
 
 By default Nest App runs in watch and debug mode and.
