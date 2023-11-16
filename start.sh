@@ -13,6 +13,8 @@ function LOAD_REPO_DATA() {
            git clone $GIT_URL_USER_SERVICE
            cd ms-demo-user
            git checkout $ENVIRONMENT
+           cp .env.sample .env
+           npm i && npm run build
            cd ..   
     fi
     if ! [ -d "ms-demo-vm" ]; then
@@ -20,6 +22,8 @@ function LOAD_REPO_DATA() {
            git clone $GIT_URL_VM_SERVICE
            cd ms-demo-vm
            git checkout $ENVIRONMENT
+           cp .env.sample .env
+           npm i && npm run build
            cd ..    
     fi
 }
